@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Fragmentation Visual Learning Kit</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo-area">
+                <div class="logo-icon">🌐</div>
+                <div class="logo-text">
+                    <h2>IP Fragmentation</h2>
+                    <span>Visual Learning Kit</span>
+                </div>
+            </div>
+
+            <div class="nav-links">
+                <button class="nav-btn active" data-target="simulator">
+                    <span class="icon">⚡</span> Interactive Simulator
+                </button>
+                <button class="nav-btn" data-target="diagram">
+                    <span class="icon">🗺️</span> Router Packet Flow
+                </button>
+                <button class="nav-btn" data-target="calculator">
+                    <span class="icon">🧮</span> Step-by-Step Engine
+                </button>
+                <button class="nav-btn" data-target="examples">
+                    <span class="icon">📚</span> 5 Worked Examples
+                </button>
+                <button class="nav-btn" data-target="practice">
+                    <span class="icon">📝</span> Exam Practice Mode <span class="badge">20 Qs</span>
+                </button>
+                <button class="nav-btn" data-target="mistakes">
+                    <span class="icon">⚠️</span> Avoid Exam Mistakes
+                </button>
+                <button class="nav-btn" data-target="revision">
+                    <span class="icon">📋</span> Quick Revision Sheet
+                </button>
+                <button class="nav-btn" data-target="glossary">
+                    <span class="icon">📖</span> Networking Glossary
+                </button>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="checklist-widget">
+                    <h4>Learning Progress</h4>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="overall-progress" style="width: 12%;"></div>
+                    </div>
+                    <span id="progress-text">1/8 modules completed</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="current-module-title">Interactive Packet Fragmentation Simulator</h1>
+                    <p id="current-module-subtitle">Experiment with packet sizes, MTU, headers, offsets, and MF flags in real-time.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="session-score-pill">
+                        ⭐ Practice Score: <span id="score-display">0</span> / <span id="total-attempted">0</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-body">
+
+                <!-- MODULE 1: SIMULATOR -->
+                <section id="simulator" class="module-section active">
+                    <div class="card control-card">
+                        <h3>Configure Original IPv4 Datagram & MTU</h3>
+                        <div class="controls-grid">
+                            <div class="input-group">
+                                <label for="sim-total-len">Original Total Length (bytes):</label>
+                                <input type="number" id="sim-total-len" value="4000" min="28" max="65535">
+                                <span class="hint">Header + Payload</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="sim-header-len">IPv4 Header Length (bytes):</label>
+                                <input type="number" id="sim-header-len" value="20" min="20" max="60" step="4">
+                                <span class="hint">Standard is 20 bytes (no options)</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="sim-mtu">Outgoing Link MTU (bytes):</label>
+                                <input type="number" id="sim-mtu" value="1500" min="28" max="65535">
+                                <span class="hint">Maximum Transmission Unit</span>
+                            </div>
+                        </div>
+
+                        <div class="preset-buttons">
+                            <span>Preloaded Examples:</span>
+                            <button class="btn-preset" data-total="4000" data-header="20" data-mtu="1500">Ex 1: 4000B / MTU 1500</button>
+                            <button class="btn-preset" data-total="2400" data-header="20" data-mtu="1000">Ex 2: 2400B / MTU 1000</button>
+                            <button class="btn-preset" data-total="2000" data-header="20" data-mtu="600">Ex 3: 2000B / MTU 600</button>
+                            <button class="btn-preset" data-total="1500" data-header="20" data-mtu="576">Ex 4: 1500B / MTU 576</button>
+                            <button class="btn-preset" data-total="1000" data-header="20" data-mtu="230">Ex 5: Non-Multiple Final</button>
+                        </div>
+
+                        <div class="action-row">
+                            <button id="btn-fragment" class="btn btn-primary">🚀 Fragment Packet</button>
+                            <button id="btn-reset" class="btn btn-secondary">🔄 Reset Defaults</button>
+                        </div>
+                    </div>
+
+                    <div id="simulation-results" class="results-container"></div>
+                </section>
+
+                <!-- MODULE 2: ROUTER FLOW DIAGRAM -->
+                <section id="diagram" class="module-section">
+                    <div class="card">
+                        <h3>Visual Router Packet Flow & Reassembly Journey</h3>
+                        <p>Step through the journey of an IPv4 packet crossing a constrained MTU link.</p>
+                        
+                        <div class="diagram-stepper-controls">
+                            <button id="diag-prev" class="btn btn-secondary">◀ Previous Step</button>
+                            <span id="diag-step-indicator" class="step-badge">Step 1 of 5</span>
+                            <button id="diag-next" class="btn btn-primary">Next Step ▶</button>
+                        </div>
+
+                        <div id="diagram-canvas-container" class="diagram-canvas"></div>
+                        <div id="diagram-explanation" class="diagram-explanation-box"></div>
+                    </div>
+                </section>
+
+                <!-- MODULE 3: STEP-BY-STEP CALCULATION ENGINE -->
+                <section id="calculator" class="module-section">
+                    <div class="card">
+                        <h3>Interactive Calculation Breakdown Engine</h3>
+                        <p>Detailed mathematical breakdown for IPv4 fragmentation formulas.</p>
+                        
+                        <div class="controls-grid">
+                            <div class="input-group">
+                                <label for="calc-total">Total Length:</label>
+                                <input type="number" id="calc-total" value="2400">
+                            </div>
+                            <div class="input-group">
+                                <label for="calc-header">Header Length:</label>
+                                <input type="number" id="calc-header" value="20">
+                            </div>
+                            <div class="input-group">
+                                <label for="calc-mtu">MTU:</label>
+                                <input type="number" id="calc-mtu" value="1000">
+                            </div>
+                        </div>
+                        <button id="btn-calculate-engine" class="btn btn-primary">Run Calculation Engine</button>
+
+                        <div id="engine-output" class="engine-output-area"></div>
+                    </div>
+                </section>
+
+                <!-- MODULE 4: WORKED EXAMPLES -->
+                <section id="examples" class="module-section">
+                    <div class="card">
+                        <h3>5 Fully Worked Exam-Style Examples</h3>
+                        <p>Complete mathematical tables for key networking scenarios.</p>
+                        
+                        <div class="example-tabs">
+                            <button class="tab-btn active" data-ex="1">Example 1 (4000B / 1500 MTU)</button>
+                            <button class="tab-btn" data-ex="2">Example 2 (2400B / 1000 MTU)</button>
+                            <button class="tab-btn" data-ex="3">Example 3 (2000B / 600 MTU)</button>
+                            <button class="tab-btn" data-ex="4">Example 4 (1500B / 576 MTU)</button>
+                            <button class="tab-btn" data-ex="5">Example 5 (Non-Multiple Final)</button>
+                        </div>
+
+                        <div id="example-content-area" class="example-content-card"></div>
+                    </div>
+                </section>
+
+                <!-- MODULE 5: EXAM PRACTICE MODE -->
+                <section id="practice" class="module-section">
+                    <div class="card">
+                        <div class="practice-header">
+                            <div>
+                                <h3>Exam Practice Mode (20 Questions)</h3>
+                                <p>Practice across Beginner, Intermediate, and Exam-Challenge tiers.</p>
+                            </div>
+                            <div class="practice-stats">
+                                <span>Question <span id="q-current-num">1</span> of 20</span>
+                                <span class="difficulty-badge" id="q-diff-badge">Beginner</span>
+                            </div>
+                        </div>
+
+                        <div id="quiz-container" class="quiz-container"></div>
+                        <div id="quiz-feedback" class="quiz-feedback hidden"></div>
+
+                        <div class="quiz-nav-row">
+                            <button id="btn-submit-answer" class="btn btn-primary">Submit Answer</button>
+                            <button id="btn-next-question" class="btn btn-secondary hidden">Next Question ▶</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MODULE 6: COMMON MISTAKES -->
+                <section id="mistakes" class="module-section">
+                    <div class="card">
+                        <h3>Avoid These Exam Mistakes</h3>
+                        <p>Learn how to spot and avoid the 6 most common student mistakes on exams.</p>
+
+                        <div class="mistakes-grid">
+                            <div class="mistake-card">
+                                <div class="mistake-tag">Pitfall 1</div>
+                                <h4>Forgetting to Subtract IP Header from MTU</h4>
+                                <p class="wrong">❌ <strong>Wrong:</strong> Setting max payload equal to MTU (e.g., MTU 1500 → payload 1500).</p>
+                                <p class="right">✔️ <strong>Correct:</strong> Max Payload = MTU − IP Header Length (1500 − 20 = 1480 bytes).</p>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-tag">Pitfall 2</div>
+                                <h4>Failing to Round Non-Final Payloads to Multiples of 8</h4>
+                                <p class="wrong">❌ <strong>Wrong:</strong> Using non-final fragment payloads like 1482 bytes.</p>
+                                <p class="right">✔️ <strong>Correct:</strong> Non-final payloads must be multiples of 8 bytes: floor(1482 / 8) × 8 = 1472 bytes.</p>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-tag">Pitfall 3</div>
+                                <h4>Treating Fragment Offset as a Byte Count</h4>
+                                <p class="wrong">❌ <strong>Wrong:</strong> Setting Fragment Offset to 1480 for fragment 2.</p>
+                                <p class="right">✔️ <strong>Correct:</strong> Offset is in 8-byte units: Prior Payload Bytes / 8 (1480 / 8 = 185).</p>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-tag">Pitfall 4</div>
+                                <h4>Setting MF = 0 on Non-Final Fragments</h4>
+                                <p class="wrong">❌ <strong>Wrong:</strong> Thinking MF = 0 means "this is a fragment".</p>
+                                <p class="right">✔️ <strong>Correct:</strong> MF = 1 means "More Fragments follow". Only the final fragment has MF = 0.</p>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-tag">Pitfall 5</div>
+                                <h4>Confusing Total Length with Payload Length</h4>
+                                <p class="wrong">❌ <strong>Wrong:</strong> Calculating fragment offset using total length instead of payload bytes.</p>
+                                <p class="right">✔️ <strong>Correct:</strong> Fragment Offset tracks original payload position excluding IP headers.</p>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-tag">Pitfall 6</div>
+                                <h4>Forgetting That Every Fragment Has an IP Header</h4>
+                                <p class="wrong">❌ <strong>Wrong:</strong> Summing fragment payloads and ignoring header overhead.</p>
+                                <p class="right">✔️ <strong>Correct:</strong> Every single fragment gets its own IPv4 header (usually 20 bytes).</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MODULE 7: REVISION SHEET -->
+                <section id="revision" class="module-section">
+                    <div class="card printable-sheet">
+                        <div class="print-header-row">
+                            <h3>Quick Revision Sheet: IPv4 Fragmentation</h3>
+                            <button id="btn-print" class="btn btn-primary">🖨️ Print Revision Sheet</button>
+                        </div>
+                        
+                        <div class="revision-grid">
+                            <div class="rev-box">
+                                <h4>🔑 Essential Definitions</h4>
+                                <ul>
+                                    <li><strong>MTU (Maximum Transmission Unit):</strong> Largest total packet size a link can carry without fragmentation.</li>
+                                    <li><strong>Fragment Offset:</strong> Measures position of fragment payload in <strong>8-byte blocks</strong>.</li>
+                                    <li><strong>MF Flag (More Fragments):</strong> <code>1</code> = More follow; <code>0</code> = Final fragment.</li>
+                                    <li><strong>DF Flag (Don't Fragment):</strong> <code>1</code> = Drops packet if MTU is exceeded and sends ICMP error.</li>
+                                </ul>
+                            </div>
+                            <div class="rev-box">
+                                <h4>📐 Calculation Formulas</h4>
+                                <ul>
+                                    <li><strong>Original Payload:</strong> Total Length − Header Length</li>
+                                    <li><strong>Max Fragment Payload:</strong> floor((MTU − Header) / 8) × 8</li>
+                                    <li><strong>Fragment Offset:</strong> Prior Payload Bytes / 8</li>
+                                    <li><strong>Fragment Total Length:</strong> Header Length + Fragment Payload</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="rev-box full-width">
+                            <h4>📋 Standard Reference Example (4000B Datagram, 20B Header, 1500B MTU)</h4>
+                            <p>Max Payload per fragment = floor((1500 − 20) / 8) × 8 = 1480 bytes.</p>
+                            <table class="rev-table">
+                                <thead>
+                                    <tr>
+                                        <th>Frag #</th>
+                                        <th>Payload (B)</th>
+                                        <th>Header (B)</th>
+                                        <th>Total Length</th>
+                                        <th>Offset (8B units)</th>
+                                        <th>MF Flag</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>1480</td>
+                                        <td>20</td>
+                                        <td>1500</td>
+                                        <td>0</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>1480</td>
+                                        <td>20</td>
+                                        <td>1500</td>
+                                        <td>185</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>1020</td>
+                                        <td>20</td>
+                                        <td>1040</td>
+                                        <td>370</td>
+                                        <td>0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MODULE 8: GLOSSARY -->
+                <section id="glossary" class="module-section">
+                    <div class="card">
+                        <h3>Beginner-Friendly Networking Glossary</h3>
+                        <p>Key terms demystified for networking and cybersecurity students.</p>
+                        <div class="glossary-grid" id="glossary-grid"></div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
